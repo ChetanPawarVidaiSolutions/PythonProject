@@ -1,6 +1,8 @@
-# tasks/models.py
+
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
+
 
 class Task(models.Model):
     STATUS_CHOICES = (
@@ -15,7 +17,7 @@ class Task(models.Model):
         ('High', 'High')
     )
 
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=50)
     description = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES)
@@ -25,3 +27,22 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Project(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    start_date = models.DateField()
+    end_date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class TaskAssignment(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    assigned_at = models.DateTimeField(auto_now_add=True)
+
+class Comment(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
